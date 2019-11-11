@@ -14,6 +14,9 @@
       <phar pharPath="C:\composer\composer.phar" interpreterId="4b071b93-d41a-44b1-80bb-ab2a7a215a58" />
     </execution>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
@@ -111,11 +114,12 @@
     </include_path>
   </component>
   <component name="ProjectId" id="1RHMXGRdgIbJ7sdEeWjGmA5jVUR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../cpost" />
+    <property name="last_opened_file_path" value="$USER_HOME$/cpost" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -157,12 +161,26 @@
       <workItem from="1572954009107" duration="105000" />
       <workItem from="1573375412836" duration="1961000" />
       <workItem from="1573377648087" duration="4032000" />
-      <workItem from="1573469803939" duration="16567000" />
+      <workItem from="1573469803939" duration="17336000" />
+      <workItem from="1573489631130" duration="584000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
