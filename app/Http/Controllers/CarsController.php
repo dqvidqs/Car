@@ -5,100 +5,135 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Car;
 use JWTAuth;
+use Illuminate\Support\Facades\Validator;
 
 class CarsController extends Controller
 {
 
-    public function getAll()
+    public function index()
     {
-        $cars = Car::orderBy('id','desc')->paginate(5);
-        return response()->json(['value' => $cars],200);
+        $cars = Car::orderBy('id', 'desc')->paginate(5);
+        return response()->json(['value' => $cars], 200);
     }
 
-    public function post(Request $request)
+    public function ordersIndex()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'worker'){
-            return "no permissions";
-        };
+        $cars = Car::select('cars.*')
+            ->where(function ($query) {
+                $user = JWTAuth::parseToken()->authenticate();
+                $query->where('created', $user['id'])
+                    ->orWhere('ordered', 'NOT','null');
+            })->get();
+        return response()->json(['value' => $cars], 200);
+    }
+
+    public function show($id)
+    {
+        $car = Car::find($id);
+        return response()->json(['value' => $car], 200);
+    }
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'brand' => 'required|string|max:50',
+            'codename' => 'sometimes|string|max:255',
             'model' => 'required|string|max:50',
-            'year' => 'required|integer|max:4',
-            'price' => 'required|double|max:10',
-            'run' => 'required|double|max:10',
-            'power' => 'required|integer|max:5',
-            'fuel' => 'required|string|max:50',
-            'body' => 'required|string|max:50'
+            'year' => 'required|integer|max:3000',
+            'price' => 'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
+            'run' => 'sometimes|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
+            'power' => 'sometimes|integer|max:10000',
+            'vin' => 'required|string|max:255|unique:cars',
+            'fuel' => 'sometimes|string|max:255',
+            'body' => 'sometimes|string|max:255',
         ]);
         if ($validator->fails()) {
-            $error = 'not valid information';
-            return response()->json(['value' => $error],200);
+            return response()->json($validator->errors()->toJson(), 400);
         }
+        $user = JWTAuth::parseToken()->authenticate();
         $car = new Car([
             'brand' => $request['brand'],
+            'codename' => $request['codename'],
             'model' => $request['model'],
             'year' => $request['year'],
-            'price'=> $request['price'],
-            'run'=> $request['run'],
-            'power'=> $request['power'],
-            'fuel'=> $request['fuel'],
-            'body'=> $request['body']
+            'price' => $request['price'],
+            'run' => $request['run'],
+            'power' => $request['power'],
+            'vin' => $request['vin'],
+            'fuel' => $request['fuel'],
+            'body' => $request['body'],
+            'created' => $user['id'],
+            'ordered' => null,
+            'confirmed' => false
         ]);
-        $car->save();
-        return response()->json(['value' => $car],200);
-    }
-
-    public function get($id)
-    {
-        $car = Car::find($id);
-        return response()->json(['value' => $car],200);
-    }
-
-
-    public function put(Request $request, $id)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        if ($user['role'] != 'worker') {
-            return "no permissions";
-        };
-        $validator = Validator::make($request->all(), [
-            'brand' => 'required|string|max:50',
-            'model' => 'required|string|max:50',
-            'year' => 'required|integer|max:4',
-            'price' => 'required|double|max:10',
-            'run' => 'required|double|max:10',
-            'power' => 'required|integer|max:5',
-            'fuel' => 'required|string|max:50',
-            'body' => 'required|string|max:50'
-        ]);
-        if ($validator->fails()) {
-            $error = 'not valid information';
-            return response()->json(['value' => $error], 200);
-        }
-        $car = Car::find($id);
-        $car->brand = $request['brand'];
-        $car->model = $request['model'];
-        $car->year = $request['year'];
-        $car->price = $request['price'];
-        $car->run = $request['run'];
-        $car->power = $request['power'];
-        $car->fuel = $request['fuel'];
-        $car->body = $request['body'];
-
         $car->save();
         return response()->json(['value' => $car], 200);
     }
 
-
-    public function delete($id)
+    public function update(Request $request, $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
-        if ($user['role'] != 'worker') {
-            return "no permissions";
-        };
         $car = Car::find($id);
+
+        if ($request['ordered'] != null && $user['role'] == 'user') {
+            $validator = Validator::make($request->all(), [
+                'ordered' => 'required|boolean'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+            if ($request['ordered'] == "1")
+                $car->ordered = $user['id'];
+            else
+                $car->ordered = null;
+        }
+        if ($request['confirm'] != null && $user['role'] == 'worker') {
+            $validator = Validator::make($request->all(), [
+                'confirm' => 'required|boolean'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+            if ($request['confirm'] == "1")
+                $car->confirm = true;
+            else
+                $car->confirm = false;
+        } elseif ($user['role'] == 'worker' && $user['id'] == $car['created']) {
+            $validator = Validator::make($request->all(), [
+                'brand' => 'required|string|max:50',
+                'codename' => 'sometimes|string|max:255',
+                'model' => 'required|string|max:50',
+                'year' => 'required|integer|max:3000',
+                'price' => 'required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
+                'run' => 'sometimes|regex:/^[0-9]+(\.[0-9][0-9]?)?$/',
+                'power' => 'sometimes|integer|max:10000',
+                'vin' => "required|string|unique:cars,vin,$id|max:255",
+                'fuel' => 'sometimes|string|max:255',
+                'body' => 'sometimes|string|max:255',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            }
+            $car->brand = $request['brand'];
+            $car->model = $request['model'];
+            $car->year = $request['year'];
+            $car->price = $request['price'];
+            $car->run = $request['run'];
+            $car->power = $request['power'];
+            $car->fuel = $request['fuel'];
+            $car->body = $request['body'];
+        }
+        $car->save();
+        return response()->json(['value' => $car], 200);
+    }
+
+    public function destroy($id)
+    {
+        $car = Car::find($id);
+        if ($car['confirmed'] != true) {
+            return response('cannot delete', 200);
+        }
         $car->delete();
-        return response('Deleted',200);
+        return response('Deleted', 200);
     }
 }

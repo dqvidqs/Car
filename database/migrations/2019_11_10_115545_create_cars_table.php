@@ -16,13 +16,16 @@ class CreateCarsTable extends Migration
         Schema::create('cars', function (Blueprint $table) {
             $table->increments('id');
             $table->string('brand');
+            $table->string('codename')->nullable();
             $table->string('model');
             $table->integer('year');
             $table->double('price');
-            $table->double('run');
-            $table->integer('power');
-            $table->enum('fuel',['petrol','diesel','electric','gas','petrol/gas','petrol/gas/electric']);
-            $table->enum('body',['sedan','wagon','hatchback','suv','coupe']);
+            $table->double('run')->nullable();
+            $table->integer('power')->nullable();
+            $table->enum('fuel',['petrol','diesel','electric','gas','petrol/gas','petrol/gas/electric'])->nullable();
+            $table->enum('body',['sedan','wagon','hatchback','suv','coupe'])->nullable();
+            $table->string('vin')->unique();;
+            $table->boolean('confirm')->nullable();
             $table->unsignedInteger('created')->nullable();
             $table->unsignedInteger('ordered')->nullable();
             $table->foreign('created')->references('id')->on('users');

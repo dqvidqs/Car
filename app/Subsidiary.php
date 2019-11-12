@@ -12,7 +12,7 @@ class Subsidiary extends Model
         'name',
         'country',
         'city',
-        'street'
+        'street',
     ];
    public $timestamps = true;
 }

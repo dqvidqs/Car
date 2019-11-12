@@ -10,38 +10,24 @@ use App\User;
 
 class SubsidiaryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    private function Check(){
-        try{
-            $user = JWTAuth::parseToken()->authenticate();
-            if($user['role'] == 'admin'){
-            };
-        }
-        catch (Exception $e){
-            return "no";
-        }
-    }
-
-    public function getAll()
+    public function index()
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'admin'){
-            return "no permissions";
-        };
         $subsidiary = Subsidiary::All();
         return response()->json(['value' => $subsidiary],200);
     }
 
-    public function post(Request $request)
+    public function show($id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'admin'){
-            return "no permissions";
-        };
+        $subsidiary = Subsidiary::find($id);
+        $workers = User::select('users.*')->where('working', $id)->get();
+        return response()->json([
+            'Subsidiary' => $subsidiary,
+            'Workers' => $workers
+        ],200);
+    }
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'country' => 'required|string|max:50',
@@ -62,21 +48,7 @@ class SubsidiaryController extends Controller
         return response()->json(['value' => $subsidiary],200);
     }
 
-    public function get($id)
-    {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'admin'){
-            return "no permissions";
-        };
-        $subsidiary = Subsidiary::find($id);
-        $workers = User::select('name')->where('working', $id)->get();
-        return response()->json([
-            'Subsidiary' => $subsidiary,
-            'Workers' => $workers
-            ],200);
-    }
-
-    public function put(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $user = JWTAuth::parseToken()->authenticate();
         if($user['role'] != 'admin'){
@@ -101,22 +73,15 @@ class SubsidiaryController extends Controller
         return response()->json(['value' => $subsidiary],200);
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'admin'){
-            return "no permissions";
-        };
         $subsiniary = Subsidiary::find($id);
-        $subsiniary->delete();
-        return response('Deleted',200);
+        $workers = User::select('users.*')->where('working', $id)->get();
+        if(empty($workers)){
+            $subsiniary->delete();
+            return response('Deleted', 200);
+        }else{
+            return response('Remove first workers', 200);
+        }
     }
-    /*public function test($sub, $user, $car)
-    {        $subsidiary = new Subsidiary([
-        'city' => $user,
-        'street'=> $car,
-    ]);
-        return response()->json(['value' => $subsidiary],200);
-        //return 'TEST'.$sub.' '.$user.' '.$car;
-    }*/
 }

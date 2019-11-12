@@ -17,125 +17,46 @@ use Illuminate\Http\Request;
     return $request->user();
 });*/
 //login nad Register
-Route::post('register', 'UsersController@register');
-Route::post('login', 'UsersController@authenticate');
-//Test
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('user', 'UsersController@getAuthenticatedUser');
-    Route::get('closed', 'DataController@closed');
-});
-//User
-Route::get('/user', 'UsersController@getAuthenticatedUser');
-//Guests and all
-Route::get('/cars', 'CarsController@getAll');
+Route::post('/register', 'UsersController@register');
+Route::post('/login', 'UsersController@authenticate');
+Route::post('/logout', 'UsersController@logout');
+
+//Guests
+Route::get('/cars', 'CarsController@index');
+Route::get('/car/{id}', 'CarsController@show');
 /*
  * Admin things
  * */
-//Subsidiaries list
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/subsidiaries', 'SubsidiaryController@getAll');//admin, supervisor
-});//get
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/subsidiaries/{id}', 'SubsidiaryController@get');
-});//put
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::put('/subsidiaries/{id}', 'SubsidiaryController@put');
-});//post
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::post('/subsidiaries', 'SubsidiaryController@post');
-});//delete
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::delete('/subsidiaries/{id}', 'SubsidiaryController@delete');
+Route::middleware(['jwt.verify:admin|supervisor'])->group(function () {
+    Route::get('/subsidiaries', 'SubsidiaryController@index');
+    Route::get('/subsidiary/{id}', 'SubsidiaryController@show');
 });
-//Worker/Supervisor list
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/workers', 'WorkersController@getAll');
-});//get
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/workers/{id}', 'WorkersController@get');
-});//put
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::put('/workers/{id}', 'WorkersController@put');
-});//post
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::post('/workers', 'WorkersController@post');
-});//delete
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::delete('/workers/{id}', 'WorkersController@delete');
+Route::middleware(['jwt.verify:admin'])->group(function () {
+    Route::put('/subsidiary/{id}', 'SubsidiaryController@update');
+    Route::post('/subsidiary', 'SubsidiaryController@store');
+    Route::delete('/subsidiary/{id}', 'SubsidiaryController@destroy');
+    Route::get('/employees', 'EmployeesController@index');
+    Route::get('/employee/{id}', 'EmployeesController@show');
+    Route::put('/employee/{id}', 'EmployeesController@update');
+    Route::post('/employee', 'EmployeesController@store');
+    Route::delete('/employee/{id}', 'EmployeesController@destroy');
 });
-//CAR - WORKER
-//get
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/car/{id}', 'CarsController@get');
-});//put
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::put('/car/{id}', 'CarsController@put');
-});//post
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::post('/car', 'CarsController@post');
-});//delete
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::delete('/car/{id}', 'CarsController@delete');
+Route::middleware(['jwt.verify:worker'])->group(function () {
+    Route::post('/car', 'CarsController@store');
+    Route::delete('/car/{id}', 'CarsController@destroy');
+    Route::get('/orders', 'CarsController@ordersIndex');
 });
-//Check orders
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/clientOrders', 'CarsController@clientOrders');
+Route::middleware(['jwt.verify:supervisor'])->group(function () {
+    Route::get('/subsidiary/{id}/workers', 'SupervisorController@indexWorkers');
+    Route::get('/subsidiary/{idsub}/worker/{idwork}', 'SupervisorController@showWorker');
+    Route::get('/subsidiary/{id}/worker/{id}/cars', 'SupervisorController@indexCars');//only confirmed
+    Route::get('/subsidiary/{id}/worker/{id}/car/{id}', 'SupervisorController@showCar');//only confirmed
+    Route::get('/search', 'SupervisorController@search');
 });
-//confirm order
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::post('/clientOrders/{id}', 'CarsController@confirmOrder');
+Route::middleware(['jwt.verify:user|worker'])->group(function () {
+    Route::put('/car/{id}', 'CarsController@update');
 });
-//USER
-//order
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
+/*Route::middleware(['jwt.verify:user'])->group(function () {
     Route::get('/order/{id}', 'CarsController@order');
-});
-//remove order
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::post('/order/{id}', 'CarsController@remove');
-});
-//check my order
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/orders', 'CarsController@orderAll');
-});
-//Supervisor
-//subsidiaries
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/subsidiary', 'Supervisor@getSubsidiary');
-});
-//workers by subsidiary
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/subsidiary/{id}/workers', 'Supervisor@getWorkers');
-});
-//cars by worker by subsidiary
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/subsidiary/{id}/workers/{id}/Cars', 'Supervisor@getCars');//only confirmed
-});
-//search
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::get('/user', 'UsersController@getAuthenticatedUser');
-    Route::get('/search', 'Supervisor@search');
-});
+});*/
 

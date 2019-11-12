@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Subsidiary;
 
 class UsersController extends Controller
 {
@@ -50,7 +49,7 @@ class UsersController extends Controller
     }
 
     public function logout(){
-        JWTAuth::auth()->logout();
+        JWTAuth::invalidate(JWTAuth::getToken());
     }
 
     public function getAuthenticatedUser()
