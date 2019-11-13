@@ -49,8 +49,8 @@ Route::middleware(['jwt.verify:worker'])->group(function () {
 Route::middleware(['jwt.verify:supervisor'])->group(function () {
     Route::get('/subsidiary/{id}/workers', 'SupervisorController@indexWorkers');
     Route::get('/subsidiary/{idsub}/worker/{idwork}', 'SupervisorController@showWorker');
-    Route::get('/subsidiary/{id}/worker/{id}/cars', 'SupervisorController@indexCars');//only confirmed
-    Route::get('/subsidiary/{id}/worker/{id}/car/{id}', 'SupervisorController@showCar');//only confirmed
+    Route::get('/subsidiary/{idsub}/worker/{idwork}/cars', 'SupervisorController@indexCars');//only confirmed
+    Route::get('/subsidiary/{idsub}/worker/{idwork}/car/{idcar}', 'SupervisorController@showUser');//only confirmed
     Route::get('/search', 'SupervisorController@search');
 });
 Route::middleware(['jwt.verify:user|worker'])->group(function () {

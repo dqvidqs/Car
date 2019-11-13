@@ -9,10 +9,11 @@ use App\Car;
 
 class SupervisorController extends Controller
 {
-    public function indexWorkers($subid)
+    public function indexWorkers($idsub)
     {
-        $subsidiary = Subsidiary::find($subid);
-        $worker = User::select('users.*')->where('working', '=', $subid)
+        $subsidiary = Subsidiary::find($idsub);
+        $worker = User::select('users.*')
+            ->where('working', '=', $idsub)
             ->get();
         return response()->json([
             'sub' => $subsidiary,
@@ -20,34 +21,59 @@ class SupervisorController extends Controller
         ], 200);
     }
 
-    public function showWorker($a, $b)
+    public function showWorker($idsub, $idwork)
     {
-        return 'ok';
-        /*$subsidiary = Subsidiary::find($subid);
-        $worker = User::select('users.*')->where('working', '=', $subid)
+        $worker = User::join('subsidiaries', 'users.working', '=', 'subsidiaries.id')
+            ->where('subsidiaries.id', '=', "$idsub")
+            ->Where('users.id', '=', "$idwork")
+            ->select('subsidiaries.name as subname', 'subsidiaries.*', 'users.*')
             ->get();
         return response()->json([
-            'sub' => $subsidiary,
-            'workers' => $worker,
-        ], 200);*/
-        $sers = User::join('users', 'users.id', '=', 'working')
-            //->where('user.id', '=', $workerid)
-            ->select('users.*', 'subsidiaries.*')
-            ->get();
-        return response()->json([
-            'sub' => $sers,
+            'worker' => $worker,
         ], 200);
     }
 
-    public function indexCars($subid, $workerid)
+    public function indexCars($idsub, $idwork)
     {
-        return 'ok';
-        //$worker = User::select('users.*')->where('working', '=', $subid)->get();
-        //$cars = Car::select('cars.*')->where('created', '=', $workerid)->get();
-        /*$cars = Car::Join('cars', 'users.id', '=', 'cars.created')
+        $worker = $this::getWorker($idsub,$idwork);
+        $cars = Car::join('users', 'cars.created', '=', 'users.id')
+            ->join('subsidiaries', 'users.working', '=', 'subsidiaries.id')
+            ->where('subsidiaries.id', '=', "$idsub")
+            ->where('users.id', '=', "$idwork")
+            ->where('cars.confirm', '=', '1')
+            ->select('cars.*')
             ->get();
         return response()->json([
-            'workers' => $worker,
- */
+            'worker' => $worker,
+            'cars' => $cars,
+        ], 200);
+    }
+
+    public function showUser($idsub, $idwork, $idcar)
+    {
+        $worker = $this::getWorker($idsub,$idwork);
+        if (!$worker->isEmpty()) {
+            $user = User::join('cars', 'cars.ordered', '=', 'users.id')
+                ->where('cars.created', '=', "$idwork")
+                ->where('cars.id', '=', "$idcar")
+                ->where('cars.confirm', '=', '1')
+                ->select('users.*', 'cars.*')
+                ->get();
+        } else {
+            $user = [];
+        }
+        return response()->json([
+            'worker' => $worker,
+            'user' => $user,
+        ], 200);
+    }
+
+    public function getWorker($idsub , $idwork)
+    {
+        $worker = User::find($idwork)
+            ->where('users.working', '=', "$idsub")
+            ->where('users.id', '=', "$idwork")
+            ->get();
+        return $worker;
     }
 }
