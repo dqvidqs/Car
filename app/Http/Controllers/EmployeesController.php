@@ -18,37 +18,32 @@ class EmployeesController extends Controller
     public function index()
     {
         $account = User::select('users.*')
-        ->where(function ($query) {
-            $query->where('role', '=', 'supervisor')
-                ->orWhere('role', '=', 'worker');
-        })->get();
+            ->where('role', '=', 'supervisor')
+            ->orWhere('role', '=', 'worker')
+            ->get();
         return response()->json(['employees' => $account], 200);
     }
 
     public function show($id)
     {
         $account = User::find($id);
-        if($account['role'] == 'user'|| $account['role'] == 'admin'){
+        if ($account['role'] == 'user' || $account['role'] == 'admin') {
             return "access denied";
         }
-        $user = JWTAuth::parseToken()->authenticate();
-        $cars = [];
-        if($user['role'] == 'supervisor'){
-            $cars = Car::select('cars.*')->where('created', $id)->get();
-        };
         return response()->json([
             'employees' => $account,
-            'cars' => $cars,
-            'role' => $user['role']
-            ], 200);
+        ], 200);
     }
-    public function store(Request $request){
+
+    public function store(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
-            'surname' => 'sometimes|string|max:50',
+            'surname' => 'required|string|max:50',
             'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|string|max:50',
+            'working' => 'sometimes|integer',
         ]);
 
         if ($validator->fails()) {
@@ -60,27 +55,29 @@ class EmployeesController extends Controller
             'surname' => $request['surname'],
             'email' => $request['email'],
             'password' => Hash::make($request->get('password')),
-            'role'=> $request['role']
+            'role' => $request['role'],
+            'working' => $request['working'],
         ]);
         $account->save();
-        return response()->json(['employees' => $account],200);
+        return response()->json(['employees' => $account], 200);
     }
+
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'surname' => 'sometimes|string|max:50',
-            'email' => 'required|string|email|max:50|unique:users',
+            'email' => "required|string|email|max:50|unique:users,email,$id",
             'password' => 'required|string|min:6|confirmed',
             'role' => 'required|string|max:50',
+            'working' => 'sometimes|integer',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
         $account = User::find($id);
-        if($account['role'] == 'user'|| $account['role'] == 'admin')
-        {
+        if ($account['role'] == 'user' || $account['role'] == 'admin') {
             return "access denied";
         }
         $account->name = $request['name'];
@@ -88,22 +85,25 @@ class EmployeesController extends Controller
         $account->email = $request['email'];
         $account->password = Hash::make($request->get('password'));
         $account->role = $request['role'];
+        $account->working = $request['working'];
         $account->save();
-        return response()->json(['employees' => $account],200);
+        return response()->json(['employees' => $account], 200);
     }
 
     public function destroy($id)
     {
         $account = User::find($id);
-        if($account['role'] == 'user'|| $account['role'] == 'admin')
-        {
-            return "access denied";
+        if ($account['role'] == 'user' || $account['role'] == 'admin') {
+            return response('access denied', 200);
         }
-        $cars = Car::select('cars.*')->where('created',$id);
-        if(!empty($cars)){
-            $cars->delete();
+        $cars = Car::select('cars.*')->where('created', $id)->get();
+        if (!$cars->isEmpty()) {
+            return response('Worker has Cars', 200);
         }
-        $account->delete();
-        return response('Deleted',200);
+        else{
+            $account->delete();
+            return response('Deleted', 200);
+
+        }
     }
 }

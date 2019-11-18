@@ -13,7 +13,7 @@ class SubsidiaryController extends Controller
     public function index()
     {
         $subsidiary = Subsidiary::All();
-        return response()->json(['value' => $subsidiary],200);
+        return response()->json(['subsidiaries' => $subsidiary],200);
     }
 
     public function show($id)
@@ -35,8 +35,7 @@ class SubsidiaryController extends Controller
             'street' => 'required|string|max:50'
         ]);
         if ($validator->fails()) {
-            $error = 'not valid information';
-            return response()->json(['value' => $error],200);
+            return response()->json($validator->errors()->toJson(), 400);
         }
         $subsidiary = new Subsidiary([
             'name' => $request['name'],
@@ -45,15 +44,11 @@ class SubsidiaryController extends Controller
             'street'=> $request['street']
         ]);
         $subsidiary->save();
-        return response()->json(['value' => $subsidiary],200);
+        return response()->json(['subsidiary' => $subsidiary],200);
     }
 
     public function update(Request $request, $id)
     {
-        $user = JWTAuth::parseToken()->authenticate();
-        if($user['role'] != 'admin'){
-            return "no permissions";
-        };
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:50',
             'country' => 'required|string|max:50',
@@ -61,8 +56,7 @@ class SubsidiaryController extends Controller
             'street' => 'required|string|max:50'
         ]);
         if ($validator->fails()) {
-            $error = 'not valid information';
-            return response()->json(['value' => $error],200);
+            return response()->json($validator->errors()->toJson(), 400);
         }
         $subsidiary = Subsidiary::find($id);
         $subsidiary->name = $request['name'];
@@ -70,14 +64,15 @@ class SubsidiaryController extends Controller
         $subsidiary->street = $request['street'];
         $subsidiary->city = $request['city'];
         $subsidiary->save();
-        return response()->json(['value' => $subsidiary],200);
+        return response()->json(['subsidiary' => $subsidiary],200);
     }
 
     public function destroy($id)
     {
         $subsiniary = Subsidiary::find($id);
         $workers = User::select('users.*')->where('working', $id)->get();
-        if(empty($workers)){
+        //return $workers;
+        if($workers->isEmpty()){
             $subsiniary->delete();
             return response('Deleted', 200);
         }else{

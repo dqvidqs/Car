@@ -35,7 +35,7 @@ class SupervisorController extends Controller
 
     public function indexCars($idsub, $idwork)
     {
-        $worker = $this::getWorker($idsub,$idwork);
+        $worker = $this::getWorker($idsub, $idwork);
         $cars = Car::join('users', 'cars.created', '=', 'users.id')
             ->join('subsidiaries', 'users.working', '=', 'subsidiaries.id')
             ->where('subsidiaries.id', '=', "$idsub")
@@ -51,7 +51,7 @@ class SupervisorController extends Controller
 
     public function showUser($idsub, $idwork, $idcar)
     {
-        $worker = $this::getWorker($idsub,$idwork);
+        $worker = $this::getWorker($idsub, $idwork);
         if (!$worker->isEmpty()) {
             $user = User::join('cars', 'cars.ordered', '=', 'users.id')
                 ->where('cars.created', '=', "$idwork")
@@ -68,12 +68,34 @@ class SupervisorController extends Controller
         ], 200);
     }
 
-    public function getWorker($idsub , $idwork)
+    public function getWorker($idsub, $idwork)
     {
         $worker = User::find($idwork)
             ->where('users.working', '=', "$idsub")
             ->where('users.id', '=', "$idwork")
             ->get();
         return $worker;
+    }
+
+    public function search(Request $request)
+    {
+        $user = User::join('cars', 'cars.ordered', '=', 'users.id')
+            ->where('name', 'LIKE', '%' . $request['value'] . '%')
+            ->orWhere('email', 'LIKE', '%' . $request['value'] . '%')
+            ->select('users.*', 'cars.*')
+            ->get();
+        if (count($user) == 0) {
+            $cars = Car::join('users', 'users.id', '=', 'cars.ordered')
+                ->where('brand', 'LIKE', '%' . $request['value'] . '%')
+                ->orWhere('model', 'LIKE', '%' . $request['value'] . '%')
+                ->select('users.*', 'cars.*')
+                ->get();
+            return response()->json([
+                'cars' => $cars,
+            ], 200);
+        }
+        return response()->json([
+            'user' => $user,
+        ], 200);
     }
 }

@@ -13,24 +13,34 @@ class CarsController extends Controller
     public function index()
     {
         $cars = Car::orderBy('id', 'desc')->paginate(5);
-        return response()->json(['value' => $cars], 200);
+        return response()->json([
+            'cars' => $cars
+        ], 200);
     }
 
     public function ordersIndex()
     {
+        $user = JWTAuth::parseToken()->authenticate();
         $cars = Car::select('cars.*')
-            ->where(function ($query) {
-                $user = JWTAuth::parseToken()->authenticate();
-                $query->where('created', $user['id'])
-                    ->orWhere('ordered', 'NOT','null');
-            })->get();
-        return response()->json(['value' => $cars], 200);
+            ->where('created', $user['id'])
+            ->where('ordered', '!=', 'null')
+            ->where('confirm','!=','1')
+            ->get();
+        /*->where(function ($query) {
+            $query->where('created', $user['id'])
+                ->orWhere('ordered', 'NOT','null');
+        })->get();*/
+        return response()->json([
+            'cars' => $cars
+        ], 200);
     }
 
     public function show($id)
     {
         $car = Car::find($id);
-        return response()->json(['value' => $car], 200);
+        return response()->json([
+            'cars' => $car
+        ], 200);
     }
 
     public function store(Request $request)
@@ -67,7 +77,7 @@ class CarsController extends Controller
             'confirmed' => false
         ]);
         $car->save();
-        return response()->json(['value' => $car], 200);
+        return response()->json(['car' => $car], 200);
     }
 
     public function update(Request $request, $id)
@@ -87,7 +97,7 @@ class CarsController extends Controller
             else
                 $car->ordered = null;
         }
-        if ($request['confirm'] != null && $user['role'] == 'worker') {
+        if ($request['confirm'] != null && $user['id'] == $car['created']) {
             $validator = Validator::make($request->all(), [
                 'confirm' => 'required|boolean'
             ]);
@@ -123,17 +133,22 @@ class CarsController extends Controller
             $car->fuel = $request['fuel'];
             $car->body = $request['body'];
         }
+        else{
+            return response('cannot update', 200);
+        }
         $car->save();
-        return response()->json(['value' => $car], 200);
+        return response()->json(['car' => $car], 200);
     }
 
     public function destroy($id)
     {
         $car = Car::find($id);
-        if ($car['confirmed'] != true) {
+        if ($car['confirm'] == true) {
             return response('cannot delete', 200);
         }
-        $car->delete();
-        return response('Deleted', 200);
+        else{
+            $car->delete();
+            return response('Deleted', 200);
+        }
     }
 }

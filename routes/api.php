@@ -13,24 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});*/
 //login nad Register
 Route::post('/register', 'UsersController@register');
 Route::post('/login', 'UsersController@authenticate');
-Route::post('/logout', 'UsersController@logout');
+Route::get('/logout', 'UsersController@logout');
 
 //Guests
 Route::get('/cars', 'CarsController@index');
 Route::get('/car/{id}', 'CarsController@show');
 /*
- * Admin things
+ * Admin/Supervisor things
  * */
 Route::middleware(['jwt.verify:admin|supervisor'])->group(function () {
     Route::get('/subsidiaries', 'SubsidiaryController@index');
     Route::get('/subsidiary/{id}', 'SubsidiaryController@show');
 });
+/*
+ * Admin things
+ * */
 Route::middleware(['jwt.verify:admin'])->group(function () {
     Route::put('/subsidiary/{id}', 'SubsidiaryController@update');
     Route::post('/subsidiary', 'SubsidiaryController@store');
@@ -56,7 +56,5 @@ Route::middleware(['jwt.verify:supervisor'])->group(function () {
 Route::middleware(['jwt.verify:user|worker'])->group(function () {
     Route::put('/car/{id}', 'CarsController@update');
 });
-/*Route::middleware(['jwt.verify:user'])->group(function () {
-    Route::get('/order/{id}', 'CarsController@order');
-});*/
+
 

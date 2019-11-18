@@ -29,6 +29,7 @@ class UsersController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -39,6 +40,7 @@ class UsersController extends Controller
 
         $user = User::create([
             'name' => $request->get('name'),
+            'surname' => $request->get('surname'),
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
         ]);
@@ -50,6 +52,9 @@ class UsersController extends Controller
 
     public function logout(){
         JWTAuth::invalidate(JWTAuth::getToken());
+        return response()->json([
+            'logout'=> 'ok',
+        ], 200);
     }
 
     public function getAuthenticatedUser()
