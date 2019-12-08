@@ -5,17 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>{{config('app.name','Car')}}</title>
-        <script src="/js/app.js"></script>
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <!-- Style -->
         <link rel="stylesheet" href="{{asset('css/app.css')}}">
-        <link href = {{ asset('bootstrap/css/bootstrap.css') }} rel="stylesheet" />
+    <!--<link href = {{ asset('bootstrap/css/bootstrap.css') }} rel="stylesheet" />-->
     </head>
     <body>
-    @include('nav.navbar')
-    <div name="container">
-        @yield('content')
-    </div>
+
+    <div id="app"></div>
+    <script src="/js/app.js"> </script>
     </body>
 </html>

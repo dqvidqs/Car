@@ -14,12 +14,6 @@
 use App\Http\Controllers\CarsController;
 use App\Http\Controllers\SubsidiaryController;
 
-/*Route::get('/', function () {
+Route::get('/', function () {
     return view('home');
-});*/
-/*Route::resource('/cars', 'CarsController');
-//Route::get('/cars','CarsController@index');
-Route::resource('/subsidiaries','SubsidiaryController');
-Route::resource('/carts','CartsController');
-Route::resource('/users','UsersController');
-Route::get('/sub/{sub}/user/{user}/car/{car}','SubsidiaryController@test');*/
+});

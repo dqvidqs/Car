@@ -12,7 +12,7 @@ class CarsController extends Controller
 
     public function index()
     {
-        $cars = Car::orderBy('id', 'desc')->paginate(5);
+        $cars = Car::orderBy('id', 'desc')->get();
         return response()->json([
             'cars' => $cars
         ], 200);
@@ -20,7 +20,9 @@ class CarsController extends Controller
 
     public function ordersIndex()
     {
+        //$token = JWTAuth::getToken();
         $user = JWTAuth::parseToken()->authenticate();
+        //$user = JWTAuth::parseToken()->authenticate();
         $cars = Car::select('cars.*')
             ->where('created', $user['id'])
             ->where('ordered', '!=', 'null')

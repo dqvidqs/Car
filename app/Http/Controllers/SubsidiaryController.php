@@ -21,8 +21,8 @@ class SubsidiaryController extends Controller
         $subsidiary = Subsidiary::find($id);
         $workers = User::select('users.*')->where('working', $id)->get();
         return response()->json([
-            'Subsidiary' => $subsidiary,
-            'Workers' => $workers
+            'subsidiaries' => $subsidiary,
+            'workers' => $workers
         ],200);
     }
 

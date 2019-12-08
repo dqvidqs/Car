@@ -14,6 +14,14 @@
       <phar pharPath="C:\composer\composer.phar" interpreterId="4b071b93-d41a-44b1-80bb-ab2a7a215a58" />
     </execution>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -116,10 +124,22 @@
   <component name="ProjectId" id="1RHMXGRdgIbJ7sdEeWjGmA5jVUR" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/cpost" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/js/components/CarPage" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Deividas\Car\resources\js\components\SubsidiaryPage" />
+      <recent name="C:\Users\Deividas\Car\resources\js\components\HomePage" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Deividas\Car\resources\js\components\CarPage" />
+      <recent name="C:\Users\Deividas\Car\resources\js" />
+      <recent name="C:\Users\Deividas\Car\resources\js\components" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -167,7 +187,15 @@
       <workItem from="1573574522232" duration="1245000" />
       <workItem from="1573655663245" duration="6108000" />
       <workItem from="1574072402721" duration="884000" />
-      <workItem from="1574079810276" duration="6139000" />
+      <workItem from="1574079810276" duration="7446000" />
+      <workItem from="1574147445521" duration="1332000" />
+      <workItem from="1574349145669" duration="199000" />
+      <workItem from="1575306496621" duration="12212000" />
+      <workItem from="1575319865667" duration="103000" />
+      <workItem from="1575389462037" duration="12007000" />
+      <workItem from="1575457872823" duration="22424000" />
+      <workItem from="1575619060761" duration="22969000" />
+      <workItem from="1575792103327" duration="4304000" />
     </task>
     <servers />
   </component>
@@ -194,6 +222,14 @@
           <url>file://$PROJECT_DIR$/routes/web.php</url>
           <line>13</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/resources/js/index.js</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/resources/js/components/SubsidiaryPage/SubsidiaryDelete.js</url>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
