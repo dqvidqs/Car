@@ -14,7 +14,7 @@ export default class Car extends Component {
     }
 
     componentDidMount() {
-        axios.get('/api/cars').then(response => {
+        axios.get('/api/orders').then(response => {
             this.setState({
                 cars: response.data.cars
             });
@@ -38,6 +38,7 @@ export default class Car extends Component {
                         <th scope="col">Brand</th>
                         <th scope="col">Model</th>
                         <th scope="col">Year</th>
+                        <th scope="col">Ordered By</th>
                         <th scope="col"></th>
                     </tr>
                     </thead>
@@ -47,7 +48,8 @@ export default class Car extends Component {
                             <td>{car.brand}</td>
                             <td>{car.model}</td>
                             <td>{car.year}</td>
-                            <td><Link to={"/car/" + car.id}> VIEW </Link></td>
+                            <td>{car.username}&#160;{car.usersurname}</td>
+                            <td><Link to={"/car-confirm/" + car.id}> Confirm </Link></td>
                         </tr>
                     )}
                     </tbody>

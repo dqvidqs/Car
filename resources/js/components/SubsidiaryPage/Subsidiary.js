@@ -12,7 +12,7 @@ export default class Subsidiary extends Component {
             subs: []
         }
     }
-    componentWillMount(){
+    componentDidMount(){
         axios.get('/api/subsidiaries').then(response =>{
             this.setState({
                 subs: response.data.subsidiaries
@@ -22,18 +22,35 @@ export default class Subsidiary extends Component {
         })
     }
     render() {
+        let button;
+        if(localStorage.getItem('role')=='admin'){
+            button=(<Link to={"/subsidiary-post"}> Post </Link>);
+        }
         return (
-            <div className="container">
-                <Link to={"/subsidiary-post"}> Post </Link>
-                <ul>
-                {this.state.subs.map(sub =>
-                    <li>
-                        <Link to={"/subsidiary/" + sub.id}> {sub.name} </Link>
-                        <Link to={"/subsidiary-delete/" + sub.id}> DELETE </Link>
-                        <Link to={"/subsidiary-update/" + sub.id}> UPDATE </Link>
-                    </li>
-                )}
-                </ul>
+            <div>
+                {button}
+                <table className="table">
+                    <thead className="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Street</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.subs.map(sub =>
+                        <tr>
+                            <td>{sub.name}</td>
+                            <td>{sub.country}</td>
+                            <td>{sub.city}</td>
+                            <td>{sub.street}</td>
+                            <td><Link to={"/subsidiary/" + sub.id}> VIEW </Link></td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
             </div>
         );
     }

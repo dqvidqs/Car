@@ -195,7 +195,8 @@
       <workItem from="1575389462037" duration="12007000" />
       <workItem from="1575457872823" duration="22424000" />
       <workItem from="1575619060761" duration="22969000" />
-      <workItem from="1575792103327" duration="4304000" />
+      <workItem from="1575792103327" duration="35490000" />
+      <workItem from="1575893772037" duration="5435000" />
     </task>
     <servers />
   </component>
@@ -230,6 +231,11 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/resources/js/components/SubsidiaryPage/SubsidiaryDelete.js</url>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/resources/js/components/SupervisorPage/WorkerDetail.js</url>
+          <line>46</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

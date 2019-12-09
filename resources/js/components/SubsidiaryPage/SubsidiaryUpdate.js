@@ -3,12 +3,8 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { browserHistory } from 'react-router';
 import {
-    Redirect,
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    Link
-} from "react-router-dom";
+    Link,
+} from "react-router";
 
 
 export default class SubsidiaryUpdate extends Component {
@@ -44,17 +40,19 @@ export default class SubsidiaryUpdate extends Component {
     }
     handleSubmit(e) {
         e.preventDefault();
-        axios.put('/api/subsidiary/' + this.props.match.params.id, this.state)
+        axios.put('/api/subsidiary/' + this.props.params.id, this.state)
             .then(response => {
                 console.log(response);
-                this.props.history.push('/subsidiaries')
+                browserHistory.push('/subsidiary/' + this.props.params.id);
             })
             .catch(errors => {
                 console.log(errors);
             });
     }
     componentDidMount() {
-        axios.get("/api/subsidiary/" + this.props.match.params.id, this.state).then(response =>{
+        console.log(this.props);
+        axios.get('/api/subsidiary/' + this.props.params.id).then(response =>{
+            console.log(response);
             this.setState({
                 name: response.data.subsidiaries.name,
                 country: response.data.subsidiaries.country,

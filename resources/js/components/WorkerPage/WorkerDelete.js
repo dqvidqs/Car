@@ -10,18 +10,18 @@ import {
 } from "react-router";
 
 
-export default class SubsidiaryDelete extends Component {
+export default class WorkerDelete extends Component {
     constructor(props){
         super(props);
     }
     componentDidMount(){
-        axios.delete("/api/subsidiary/" + this.props.params.id).then(response =>{
-            browserHistory.push('/subsidiaries');
-            }).catch(errors =>{
+        axios.delete("/api/employee/" + this.props.params.id).then(response =>{
+            browserHistory.push('/employees');
+        }).catch(errors =>{
             console.log(errors);
         })
     }
-       render() {
+    render() {
         return (
 
             <div className="container">
@@ -29,7 +29,7 @@ export default class SubsidiaryDelete extends Component {
                     <div className="col-md-8">
                         <div className="card">
                             <div className="card-body">
-                             DELETED
+                                DELETED
                             </div>
                         </div>
                     </div>
@@ -40,6 +40,6 @@ export default class SubsidiaryDelete extends Component {
     }
 }
 
-if (document.getElementById('subsidiarydelete')) {
-    ReactDOM.render(<SubsidiaryDelete />, document.getElementById('subsidiarydelete'));
+if (document.getElementById('workerdelete')) {
+    ReactDOM.render(<WorkerDelete />, document.getElementById('workerdelete'));
 }

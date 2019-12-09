@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
 import {
-    withRouter,
     Redirect,
     BrowserRouter as Router,
     Switch,
     Route,
     Link, browserHistory
 } from "react-router";
-import setAuthorizationToken from "../../utils/AuthorizationToken";
 
 
-export default class Register extends Component {
+export default class WorkerStore extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,17 +18,30 @@ export default class Register extends Component {
             surname: '',
             email: '',
             password: '',
-            password_confirmation: ''
+            password_confirmation: '',
+            role: '',
+            working: '',
+            subs: []
         }
     }
     handleNameChange(e){
         this.setState({
-           name: e.target.value
+            name: e.target.value
         });
     }
     handleSurnameChange(e){
         this.setState({
             surname: e.target.value
+        });
+    }
+    handleRoleChange(e){
+        this.setState({
+            role: e.target.value
+        });
+    }
+    handleWorkingChange(e){
+        this.setState({
+            working: e.target.value
         });
     }
     handleEmailChange(e){
@@ -44,30 +54,45 @@ export default class Register extends Component {
             password: e.target.value
         });
     }
-    handlePasswordConfirmationChange(e){
+    handleConfirmationChange(e){
         this.setState({
             password_confirmation: e.target.value
         });
     }
     handleSubmit(e) {
         e.preventDefault();
-        axios.post('/api/register', this.state)
+        this.state.subs =  '';
+        console.log(this.state);
+        axios.put('/api/employee/' + this.props.params.id, this.state)
             .then(response => {
-                console.log(response)
-                const token = response.data.token;
-                localStorage.setItem('jwt', token);
-                setAuthorizationToken(token);
-                let decoded = jwt_decode(token);
-                localStorage.setItem('name', decoded.name);
-                localStorage.setItem('surname', decoded.surname);
-                localStorage.setItem('role', decoded.role);;
-                setAuthorizationToken(token);
-                browserHistory.push('/');
+                browserHistory.push('/employees');
             })
             .catch(errors => {
-                console.log(errors)
-            })
+                console.log(errors);
+            });
     }
+    componentDidMount() {
+        axios.get('/api/subsidiaries').then(response =>{
+            this.setState({
+                subs: response.data.subsidiaries
+            });
+        }).catch(errors =>{
+            console.log(errors);
+        })
+        axios.get("/api/employee/" + this.props.params.id).then(response => {
+            console.log(response);
+            this.setState({
+                name: response.data.employees.name,
+                surname: response.data.employees.surname,
+                role: response.data.employees.role,
+                working: response.data.employees.working,
+                email: response.data.employees.email,
+            });
+        }).catch(errors => {
+            console.log(errors);
+        })
+    }
+
     render() {
         return (
             <div className="container">
@@ -104,13 +129,28 @@ export default class Register extends Component {
                                         onChange={this.handlePasswordChange.bind(this)}
                                         value={this.state.password}
                                     /><br/>
-                                    <label>Password Confirm:</label><br/>
+                                    <label>Password confirm:</label><br/>
                                     <input
                                         type="password"
                                         name="password_confirmation"
-                                        onChange={this.handlePasswordConfirmationChange.bind(this)}
+                                        onChange={this.handleConfirmationChange.bind(this)}
                                         value={this.state.password_confirmation}
                                     /><br/>
+                                    <label>Roles:</label><br/>
+                                    <select onChange={this.handleRoleChange.bind(this)} value={this.state.role}>
+                                        <option value="null">---</option>
+                                        <option value="worker">Worker</option>
+                                        <option value="supervisor">Supervisor</option>
+                                    </select>
+                                    <br/>
+                                    <label>Working at:</label><br/>
+                                    <select onChange={this.handleWorkingChange.bind(this)} value={this.state.working}>
+                                        <option value="null">---</option>
+                                        {this.state.subs.map(sub =>
+                                            <option value={sub.id}>{sub.name}</option>)
+                                        }
+                                    </select>
+                                    <br/>
                                     <button type="submit">Submit</button>
                                 </form>
                             </div>
@@ -122,6 +162,6 @@ export default class Register extends Component {
     }
 }
 
-if (document.getElementById('register')) {
-    ReactDOM.render(<Register />, document.getElementById('register'));
+if (document.getElementById('subsidiarystore')) {
+    ReactDOM.render(<SubsidiaryStore />, document.getElementById('subsidiarystore'));
 }

@@ -6,8 +6,8 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
-} from "react-router-dom";
+    Link, browserHistory
+} from "react-router";
 
 
 export default class SubsidiaryStore extends Component {
@@ -44,7 +44,7 @@ export default class SubsidiaryStore extends Component {
         e.preventDefault();
         axios.post('/api/subsidiary', this.state)
             .then(response => {
-                this.props.history.push('/subsidiaries')
+                browserHistory.push('/subsidiaries');
             })
             .catch(errors => {
                 console.log(errors);

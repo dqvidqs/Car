@@ -9,6 +9,7 @@ import {
 import setAuthorizationToken from "../../utils/AuthorizationToken";
 import { connect } from 'react-redux';
 import axios from "axios";
+import Logo from "./Logo";
 setAuthorizationToken(localStorage.getItem('jwt'));
 
 class NavBar extends React.Component {
@@ -24,26 +25,26 @@ class NavBar extends React.Component {
             surname: ''
         };
     }
+
     componentDidMount() {
-        axios.get('/api/user').then(response =>{
+        axios.get('/api/user').then(response => {
             this.setState({
                 data: response.data.user
             });
-        }).catch(errors =>{
+        }).catch(errors => {
             console.log(errors);
         })
     }
 
     componentWillMount() {
-        if(localStorage.getItem('jwt') == null) {
+        if (localStorage.getItem('jwt') == null) {
             this.setState({
                 isLoggedIn: false,
                 role: '',
                 name: '',
                 surname: ''
             });
-        }
-        else{
+        } else {
             this.setState({
                 isLoggedIn: true,
                 role: localStorage.getItem('role'),
@@ -52,6 +53,7 @@ class NavBar extends React.Component {
             });
         }
     }
+
     componentWillUpdate(nextProps, nextState, nextContext) {
         if (localStorage.getItem('jwt') == null) {
             this.state.isLoggedIn = false;
@@ -89,7 +91,7 @@ class NavBar extends React.Component {
             button_0 = (
                 <ul className="navbar-nav">
                     <li className="nav-item"><Link className="nav-link" to="/register">Register</Link></li>
-                    <li className="nav-item"><Link className="nav-link" to="/login">Login</Link> </li>
+                    <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
                 </ul>
             );
         } else {
@@ -102,17 +104,29 @@ class NavBar extends React.Component {
                 </ul>
             );
         }
-        if(name != ''){
+        if (name != '') {
             button_1 = (
-                <div><h6>{name}&#160;{surname}&#160;{role}</h6></div>
+                <h6>{name}&#160;{surname}&#160;{role}</h6>
+            );
+        } else {
+            button_1 = (
+                <h6>Guest</h6>
             );
         }
-        else{
-            button_1 = (
-                <div><h6>Guest</h6></div>
+        if (role == 'admin') {
+            button_2 = (
+                <ul className="navbar-nav mr-auto">
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/subsidiaries">Subsidiaries<span
+                            className="sr-only">(current)</span></Link>
+                    </li>
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/employees">Employees<span
+                            className="sr-only">(current)</span></Link>
+                    </li>
+                </ul>
             );
-        }
-        if(role == 'admin'){
+        } else if (role == 'supervisor') {
             button_2 = (
                 <li className="nav-item">
                     <Link className="nav-link" to="/subsidiaries">Subsidiaries<span
@@ -120,43 +134,46 @@ class NavBar extends React.Component {
                 </li>
             );
         }
-        else if(role == 'worker'){
-            button_2 = (
-                <div><h6>Guest</h6></div>
-            );
-        }
-        else if(role == 'supervisor'){
+        else if (role == 'worker') {
             button_2 = (
                 <li className="nav-item">
-                    <Link className="nav-link" to="/subsidiaries">Subsidiaries<span
+                    <Link className="nav-link" to="/orders">Orders<span
                         className="sr-only">(current)</span></Link>
                 </li>
-            );
-        }
-        else if(role == 'user'){
-            button_2 = (
-                <div><h6>Guest</h6></div>
             );
         }
         return (
-            <div>
+            <header>
+                <Logo/>
                 {button_1}
-                <nav className="navbar navbar-expand navbar-dark bg-dark">
-                    <div className="collapse navbar-collapse" id="navbarsExample02">
+                <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <button className="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarNav" aria-controls="navbarNav"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav mr-auto">
+
                             <li className="nav-item">
                                 <Link className="nav-link" to="/">Home<span className="sr-only">(current)</span></Link>
                             </li>
+
                             <li className="nav-item">
                                 <Link className="nav-link" to="/cars">Cars<span
                                     className="sr-only">(current)</span></Link>
                             </li>
+                            {button_2}
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/about">About<span
+                                    className="sr-only">(current)</span></Link>
+                            </li>
+
                         </ul>
-                        {button_2}
                         {button_0}
                     </div>
                 </nav>
-            </div>
+            </header>
         );
     }
 }

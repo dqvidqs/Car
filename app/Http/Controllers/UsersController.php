@@ -74,7 +74,19 @@ class UsersController extends Controller
             'email' => $request->get('email'),
             'password' => Hash::make($request->get('password')),
         ]);
-
+        $data = [
+            'role' => $user['role'],
+            'name' => $user['name'],
+            'surname' => $user['surname'],
+            'iss' => new Issuer('faker'),
+            'iat' => new IssuedAt(Carbon::now('UTC')) ,
+            'exp' => new Expiration(Carbon::now('UTC')->addDays(1)),
+            'nbf' => new NotBefore(Carbon::now('UTC')),
+            'sub' => new Subject('faker'),
+            'jti' => new JwtId('faker'),
+        ];
+        JWTFactory::customClaims($data);
+        JWTFactory::make($data);
         $token = JWTAuth::fromUser($user);
 
         return response()->json(compact('token'), 200);

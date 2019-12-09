@@ -27,7 +27,7 @@ class SupervisorController extends Controller
             ->where('subsidiaries.id', '=', "$idsub")
             ->Where('users.id', '=', "$idwork")
             ->select('subsidiaries.name as subname', 'subsidiaries.*', 'users.*')
-            ->get();
+            ->first();
         return response()->json([
             'worker' => $worker,
         ], 200);
@@ -52,13 +52,14 @@ class SupervisorController extends Controller
     public function showUser($idsub, $idwork, $idcar)
     {
         $worker = $this::getWorker($idsub, $idwork);
-        if (!$worker->isEmpty()) {
+        $user = [];
+        if ($worker->exists()) {
             $user = User::join('cars', 'cars.ordered', '=', 'users.id')
                 ->where('cars.created', '=', "$idwork")
                 ->where('cars.id', '=', "$idcar")
                 ->where('cars.confirm', '=', '1')
                 ->select('users.*', 'cars.*')
-                ->get();
+                ->first();
         } else {
             $user = [];
         }
@@ -70,11 +71,12 @@ class SupervisorController extends Controller
 
     public function getWorker($idsub, $idwork)
     {
-        $worker = User::find($idwork)
-            ->where('users.working', '=', "$idsub")
-            ->where('users.id', '=', "$idwork")
-            ->get();
-        return $worker;
+        $account = User::join('subsidiaries','subsidiaries.id','=','users.working')
+            ->where('users.id','=', $idwork)
+            ->where('subsidiaries.id','=', $idsub)
+            ->select('users.*','subsidiaries.name as workingid')
+            ->first();
+        return $account;
     }
 
     public function search(Request $request)

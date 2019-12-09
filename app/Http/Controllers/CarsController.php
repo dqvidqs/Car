@@ -9,10 +9,13 @@ use Illuminate\Support\Facades\Validator;
 
 class CarsController extends Controller
 {
-
     public function index()
     {
-        $cars = Car::orderBy('id', 'desc')->get();
+        $cars = Car::select('cars.*')
+            ->where('cars.confirm','=', null)
+            ->where('cars.ordered','=', null)
+            ->orderBy('id','des')
+            ->get();
         return response()->json([
             'cars' => $cars
         ], 200);
@@ -20,18 +23,12 @@ class CarsController extends Controller
 
     public function ordersIndex()
     {
-        //$token = JWTAuth::getToken();
         $user = JWTAuth::parseToken()->authenticate();
-        //$user = JWTAuth::parseToken()->authenticate();
-        $cars = Car::select('cars.*')
-            ->where('created', $user['id'])
-            ->where('ordered', '!=', 'null')
-            ->where('confirm','!=','1')
+        $cars = Car::join('users','users.id','=','cars.ordered')
+            ->where('cars.created','=', $user['id'])
+            ->where('cars.confirm','=',null)
+            ->select('cars.*','users.name as username','users.surname as usersurname')
             ->get();
-        /*->where(function ($query) {
-            $query->where('created', $user['id'])
-                ->orWhere('ordered', 'NOT','null');
-        })->get();*/
         return response()->json([
             'cars' => $cars
         ], 200);
@@ -41,7 +38,7 @@ class CarsController extends Controller
     {
         $car = Car::find($id);
         return response()->json([
-            'cars' => $car
+            'car' => $car
         ], 200);
     }
 
@@ -99,7 +96,7 @@ class CarsController extends Controller
             else
                 $car->ordered = null;
         }
-        if ($request['confirm'] != null && $user['id'] == $car['created']) {
+        else if ($request['confirm'] != null && $user['id'] == $car['created']) {
             $validator = Validator::make($request->all(), [
                 'confirm' => 'required|boolean'
             ]);

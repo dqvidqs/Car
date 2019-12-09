@@ -26,7 +26,13 @@ class EmployeesController extends Controller
 
     public function show($id)
     {
-        $account = User::find($id);
+        $account = User::join('subsidiaries','subsidiaries.id','=','users.working')
+            ->where('users.id','=', $id)
+            ->select('users.*','subsidiaries.name as workingid')
+            ->first();
+        if($account == null){
+            $account = User::find($id);
+        }
         if ($account['role'] == 'user' || $account['role'] == 'admin') {
             return "access denied";
         }

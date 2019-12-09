@@ -1,6 +1,6 @@
 import React from 'react';
-import Greetings from "./HomePage/Greetings";
 import NavBar from "./HomePage/NavBar";
+import Footer from "./HomePage/Footer";
 
 class App extends React.Component {
     render() {
@@ -8,6 +8,7 @@ class App extends React.Component {
             <div className="container">
                 <NavBar/>
                 {this.props.children}
+                <Footer/>
             </div>
         );
     };
