@@ -61282,7 +61282,7 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CarConfirm).call(this, props));
     _this.state = {
-      confirm: "0"
+      confirm: "1"
     };
     return _this;
   }
@@ -61290,17 +61290,14 @@ function (_Component) {
   _createClass(CarConfirm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
-
-      axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/api/car/" + this.props.params.id).then(function (response) {
-        console.log(response);
-
-        _this2.setState({
-          confirm: "1"
-        });
-      })["catch"](function (errors) {
-        console.log(errors);
-      });
+      /*axios.get("/api/car/" + this.props.params.id).then(response => {
+          console.log(response);
+          this.setState({
+              confirm: "1"
+          });
+      }).catch(errors => {
+          console.log(errors);
+      })*/
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.put("/api/car/" + this.props.params.id, this.state).then(function (response) {
         console.log(response);
         react_router__WEBPACK_IMPORTED_MODULE_3__["browserHistory"].push('/orders');
@@ -62499,7 +62496,7 @@ function (_React$Component) {
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "jumbotron"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "HI!!!!!!!"));
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Welcome to Car Sale Online"));
     }
   }]);
 
@@ -62991,9 +62988,9 @@ function (_React$Component) {
       }
 
       if (name != '') {
-        button_1 = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, name, "\xA0", surname, "\xA0", role);
+        button_1 = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Hello,\xA0", name, "\xA0", surname, ",\xA0Role:", role);
       } else {
-        button_1 = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Guest");
+        button_1 = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h6", null, "Hi, Guest");
       }
 
       if (role == 'admin') {
@@ -64800,11 +64797,13 @@ function (_Component) {
   }, {
     key: "handleSubmit",
     value: function handleSubmit(e) {
+      var _this2 = this;
+
       e.preventDefault();
       this.state.subs = '';
       console.log(this.state);
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.put('/api/employee/' + this.props.params.id, this.state).then(function (response) {
-        react_router__WEBPACK_IMPORTED_MODULE_3__["browserHistory"].push('/employees');
+        react_router__WEBPACK_IMPORTED_MODULE_3__["browserHistory"].push('/employee/' + _this2.props.params.id);
       })["catch"](function (errors) {
         console.log(errors);
       });
@@ -64812,10 +64811,10 @@ function (_Component) {
   }, {
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.get('/api/subsidiaries').then(function (response) {
-        _this2.setState({
+        _this3.setState({
           subs: response.data.subsidiaries
         });
       })["catch"](function (errors) {
@@ -64824,7 +64823,7 @@ function (_Component) {
       axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/api/employee/" + this.props.params.id).then(function (response) {
         console.log(response);
 
-        _this2.setState({
+        _this3.setState({
           name: response.data.employees.name,
           surname: response.data.employees.surname,
           role: response.data.employees.role,

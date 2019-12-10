@@ -104,10 +104,10 @@ class CarsController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             }
             if ($request['confirm'] == "1")
-                $car->confirm = true;
+                $car->confirm = "1";
             else
-                $car->confirm = false;
-        } elseif ($user['role'] == 'worker' && $user['id'] == $car['created']) {
+                $car->confirm = "0";
+        } elseif ($user['role'] == 'worker') {
             $validator = Validator::make($request->all(), [
                 'brand' => 'required|string|max:50',
                 'codename' => 'sometimes|string|max:255',

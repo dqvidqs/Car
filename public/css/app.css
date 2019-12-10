@@ -11393,9 +11393,6 @@ button {
 
 button:hover {
   color: gainsboro !important;
-  font-size: 20px !important;
-  -webkit-transition: color, font-size 1s !important;
-  transition: color, font-size 1s !important;
 }
 
 .navbar-dark .navbar-nav .nav-link {

@@ -14,18 +14,18 @@ export default class CarConfirm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            confirm: "0",
+            confirm: "1",
         }
     }
     componentDidMount() {
-        axios.get("/api/car/" + this.props.params.id).then(response => {
+        /*axios.get("/api/car/" + this.props.params.id).then(response => {
             console.log(response);
             this.setState({
                 confirm: "1"
             });
         }).catch(errors => {
             console.log(errors);
-        })
+        })*/
         axios.put("/api/car/" + this.props.params.id, this.state).then(response => {
             console.log(response);
             browserHistory.push('/orders');

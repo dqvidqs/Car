@@ -106,11 +106,11 @@ class NavBar extends React.Component {
         }
         if (name != '') {
             button_1 = (
-                <h6>{name}&#160;{surname}&#160;{role}</h6>
+                <h6>Hello,&#160;{name}&#160;{surname},&#160;Role:{role}</h6>
             );
         } else {
             button_1 = (
-                <h6>Guest</h6>
+                <h6>Hi, Guest</h6>
             );
         }
         if (role == 'admin') {

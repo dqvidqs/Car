@@ -65,7 +65,7 @@ export default class WorkerStore extends Component {
         console.log(this.state);
         axios.put('/api/employee/' + this.props.params.id, this.state)
             .then(response => {
-                browserHistory.push('/employees');
+                browserHistory.push('/employee/'+ this.props.params.id);
             })
             .catch(errors => {
                 console.log(errors);
